@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="238.0" prefWidth="600.0" style="-fx-background-color: aqua;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.login.LoginController">
+   <children>
+      <ImageView fitHeight="276.0" fitWidth="289.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/login.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="361.0" prefHeight="52.0" prefWidth="102.0" text="Login" textFill="RED">
+         <font>
+            <Font name="System Bold" size="30.0" />
+         </font>
+      </Label>
+      <TextField fx:id="usernameTF" layoutX="309.0" layoutY="66.0" onKeyReleased="#checkUsernameOnKeyReleased" prefHeight="33.0" prefWidth="205.0" promptText="Username" />
+      <PasswordField fx:id="passwordTF" layoutX="309.0" layoutY="107.0" onKeyReleased="#checkPasswordOnKeyReleased" prefHeight="33.0" prefWidth="205.0" promptText="Password" />
+      <Label fx:id="infoUsernameLBL" layoutX="521.0" layoutY="66.0" prefHeight="33.0" prefWidth="20.0" style="-fx-background-color: red;" />
+      <Label fx:id="infoPasswordLBL" layoutX="521.0" layoutY="107.0" prefHeight="33.0" prefWidth="20.0" style="-fx-background-color: red;" />
+      <Button fx:id="createAccountBtn" layoutX="291.0" layoutY="189.0" mnemonicParsing="false" onAction="#createAccountBtnOnAction" prefHeight="37.0" prefWidth="141.0" style="-fx-background-color: white; -fx-border-color: green; -fx-border-width: 3;" text="Create Account" textFill="#e80000">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Button>
+      <Button fx:id="loginBtn" layoutX="444.0" layoutY="189.0" mnemonicParsing="false" onAction="#loginBtnOnAction" prefHeight="37.0" prefWidth="141.0" style="-fx-background-color: white; -fx-border-color: green; -fx-border-width: 3;" text="Login" textFill="#e80000">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Button>
+      <Label fx:id="warningLBL" layoutX="300.0" layoutY="140.0" prefHeight="37.0" prefWidth="290.0" textFill="RED">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
