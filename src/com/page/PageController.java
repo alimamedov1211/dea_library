@@ -1,12 +1,18 @@
-
 package com.page;
 
+import com.dao.DaoImpl;
+import com.model.Book;
 import com.model.Users;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -14,12 +20,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import javax.swing.JOptionPane;
 
 public class PageController implements Initializable {
 
+    DaoImpl dao = new DaoImpl();
     @FXML
     private TextField nameTF;
     @FXML
@@ -29,13 +40,13 @@ public class PageController implements Initializable {
     @FXML
     private TextField AmountTF;
     @FXML
-    private ComboBox<?> languageCombobox;
+    private ComboBox<String> languageCombobox;
     @FXML
     private Button addLanguageBtn;
     @FXML
     private Button addThemeBtn;
     @FXML
-    private ComboBox<?> themeCombobox;
+    private ComboBox<String> themeCombobox;
     @FXML
     private Button saveBtn;
     @FXML
@@ -77,33 +88,35 @@ public class PageController implements Initializable {
     @FXML
     private Button logOutBtn;
     @FXML
-    private TableView<?> tableView;
+    private TableView<Book> tableView;
     @FXML
-    private TableColumn<?, ?> idColumn;
+    private TableColumn<Book, Integer> idColumn;
     @FXML
-    private TableColumn<?, ?> nameColumn;
+    private TableColumn<Book, String> nameColumn;
     @FXML
-    private TableColumn<?, ?> authorColumn;
+    private TableColumn<Book, String> authorColumn;
     @FXML
-    private TableColumn<?, ?> pageCountColumn;
+    private TableColumn<Book, Integer> pageCountColumn;
     @FXML
-    private TableColumn<?, ?> amountColumn;
+    private TableColumn<Book, Double> amountColumn;
     @FXML
-    private TableColumn<?, ?> languageColumn;
+    private TableColumn<Book, String> languageColumn;
     @FXML
-    private TableColumn<?, ?> themeColumn;
+    private TableColumn<Book, String> themeColumn;
     @FXML
-    private TableColumn<?, ?> statusColumn;
+    private TableColumn<Book, String> statusColumn;
     @FXML
     private Label warningLBL;
-    
-        Users user = new Users();
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        welcomeLBL.setText("Welcome, ");
-      
-    }    
+        loadLanguageCB();
+        loadThemeCB();
+        tableView.setVisible(false);
+//        welcomeLBL.setText("Welcome, "+u.getName()+" "+u.getSurname());
+        loadColumn();
+        loadRows();
+    }
 
     @FXML
     private void languageComboboxOnKeyReleased(KeyEvent event) {
@@ -111,10 +124,34 @@ public class PageController implements Initializable {
 
     @FXML
     private void addLanguageBtnOnAction(ActionEvent event) {
+        String newLanguage = JOptionPane.showInputDialog(null,"New Language");
+        if (newLanguage.equalsIgnoreCase("")) {
+            warningLBL.setText("Language is empty!");
+        } else {
+            if (languageCombobox.getItems().contains(newLanguage)) {
+                warningLBL.setText("Not added! Language already exist");
+            } else {
+                if (languageCombobox.getItems().add(newLanguage)) {
+                    warningLBL.setText("New Language successfully added!");
+                } 
+            }
+        }
     }
 
     @FXML
     private void addThemeBtnOnAction(ActionEvent event) {
+         String newTheme = JOptionPane.showInputDialog(null,"New Theme");
+        if (newTheme.equalsIgnoreCase("")) {
+            warningLBL.setText("Theme is empty!");
+        } else {
+            if (themeCombobox.getItems().contains(newTheme)) {
+                warningLBL.setText("Not added! Theme already exist");
+            } else {
+                if (themeCombobox.getItems().add(newTheme)) {
+                    warningLBL.setText("New Theme successfully added!");
+                } 
+            }
+        }
     }
 
     @FXML
@@ -155,18 +192,77 @@ public class PageController implements Initializable {
 
     @FXML
     private void showBtnOnAction(ActionEvent event) {
+        tableView.setVisible(true);
+
     }
 
     @FXML
     private void hideBtnOnAction(ActionEvent event) {
+        tableView.setVisible(false);
     }
 
     @FXML
     private void logOutBtnOnAction(ActionEvent event) {
+        try {
+            int response = JOptionPane.showConfirmDialog(null, "Are you sure?");
+            if (response == JOptionPane.YES_OPTION) {
+                Stage stage = (Stage) logOutBtn.getScene().getWindow();
+                stage.close();
+                Stage stage1 = new Stage();
+                stage1.initModality(Modality.APPLICATION_MODAL);
+                stage1.setTitle("Login");
+                stage1.getIcons().add(new Image("/com/images/login.png"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/login/login.fxml"));
+                Parent root = loader.load();
+                Scene scene = new Scene(root);
+                stage1.setScene(scene);
+                stage1.show();
+            } else {
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void tableViewOnMousePressed(MouseEvent event) {
     }
-    
+
+    private void loadLanguageCB() {
+        List<String> language = new ArrayList<String>();
+        languageCombobox.getItems().add("Azerbaycanca");
+        languageCombobox.getItems().add("Rus");
+        languageCombobox.getItems().add("Ingilisce");
+        languageCombobox.getItems().add("Fransizca");
+        languageCombobox.getItems().add("Almanca");
+        languageCombobox.getItems().add("Turkce");
+        languageCombobox.getSelectionModel().selectFirst();
+    }
+
+    private void loadThemeCB() {
+        List<String> theme = new ArrayList<String>();
+        themeCombobox.getItems().add("Roman");
+        themeCombobox.getItems().add("Nagil");
+        themeCombobox.getItems().add("Derslik");
+        themeCombobox.getItems().add("Elmi");
+        themeCombobox.getItems().add("Dedektiv");
+        themeCombobox.getItems().add("Ozunu inkisaf");
+        themeCombobox.getSelectionModel().selectFirst();
+    }
+
+    private void loadColumn() {
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        authorColumn.setCellValueFactory(new PropertyValueFactory<>("author"));
+        pageCountColumn.setCellValueFactory(new PropertyValueFactory<>("pageCount"));
+        amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        languageColumn.setCellValueFactory(new PropertyValueFactory<>("language"));
+        themeColumn.setCellValueFactory(new PropertyValueFactory<>("theme"));
+        statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+    }
+
+    private void loadRows() {
+        tableView.getItems().addAll(dao.getAllBooks());
+    }
+
 }

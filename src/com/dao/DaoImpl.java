@@ -1,10 +1,13 @@
 package com.dao;
 
+import com.model.Book;
 import com.model.Users;
 import com.util.Utility;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DaoImpl implements Dao {
 
@@ -15,8 +18,7 @@ public class DaoImpl implements Dao {
         PreparedStatement ps = null;   //Bazadan gelen sql i icraya hazirlayir
         //RESULTSET  bazadan melumat getirir
         String sql = "insert into library_group1.users(name,surname,username,password,mail,address)\n"
-        + "values ('" + users.getName() + "','" + users.getSurname() + "','" + users.getUsername() + "','" + users.getPassword() + "','" + users.getMail() + "','" + users.getAddress() + "')";
-      
+                                      + "values ('" + users.getName() + "','" + users.getSurname() + "','" + users.getUsername() + "','" + users.getPassword() + "','" + users.getMail() + "','" + users.getAddress() + "')";
 
         c = DbHelper.getConnection();
         if (c != null) {
@@ -26,12 +28,12 @@ public class DaoImpl implements Dao {
                 result = true;
             } catch (Exception e) {
                 e.printStackTrace();
-                
+
             } finally {
                 Utility.closeAll(c, ps, null);
             }
         } else {
-            
+
             System.out.println("Not Connection");
         }
         return result;
@@ -56,7 +58,7 @@ public class DaoImpl implements Dao {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                
+
             } finally {
                 Utility.closeAll(c, ps, rs);
             }
@@ -74,7 +76,7 @@ public class DaoImpl implements Dao {
         PreparedStatement ps = null;
         ResultSet rs = null;
         String sql = "select id,name,surname,username,password,mail,address from library_group1 .users\n"
-                                      + "where username='" + username + "' and password = '"+password+"'";
+                                      + "where username='" + username + "' and password = '" + password + "'";
         c = DbHelper.getConnection();
         if (c != null) {
             try {
@@ -88,14 +90,13 @@ public class DaoImpl implements Dao {
                     u.setPassword(rs.getString("password"));
                     u.setMail(rs.getString("mail"));
                     u.setAddress(rs.getString("address"));
-                }
-                else{
+                } else {
                     u = null;
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
-                
+
             } finally {
                 Utility.closeAll(c, ps, rs);
             }
@@ -105,6 +106,40 @@ public class DaoImpl implements Dao {
         return u;
     }
 
-   
+    @Override
+    public List<Book> getAllBooks() {
+        List<Book> allBooks = new ArrayList<Book>();
+        Connection c = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        String sql = "select id,name,theme,author,page_count,amount,language,status from library_group1.book";
+        c = DbHelper.getConnection();
+        if (c != null) {
+            try {
+                ps = c.prepareStatement(sql);
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    Book book = new Book();
+                    book.setId(rs.getInt("id"));
+                    book.setName(rs.getString("name"));
+                    book.setAmount(rs.getDouble("amount"));
+                    book.setAuthor(rs.getString("author"));
+                    book.setTheme(rs.getString("theme"));
+                    book.setPageCount(rs.getInt("page_count"));
+                    book.setLanguage(rs.getString("language"));
+                    book.setStatus(rs.getString("status"));
+                    allBooks.add(book);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            finally{
+                Utility.closeAll(c, ps, rs);
+            }
+        } else {
+            System.out.println("No Connection");
+        }
+        return allBooks;
+    }
 
 }
