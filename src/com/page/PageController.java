@@ -1,6 +1,7 @@
 package com.page;
 
 import com.dao.DaoImpl;
+import com.login.LoginController;
 import com.model.Book;
 import com.model.Users;
 import java.net.URL;
@@ -107,13 +108,13 @@ public class PageController implements Initializable {
     private TableColumn<Book, String> statusColumn;
     @FXML
     private Label warningLBL;
-
+    Users u = new Users();
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadLanguageCB();
         loadThemeCB();
         tableView.setVisible(false);
-//        welcomeLBL.setText("Welcome, "+u.getName()+" "+u.getSurname());
+        welcomeLBL.setText("Welcome, "+LoginController.username1);
         loadColumn();
         loadRows();
     }
@@ -209,7 +210,7 @@ public class PageController implements Initializable {
                 Stage stage = (Stage) logOutBtn.getScene().getWindow();
                 stage.close();
                 Stage stage1 = new Stage();
-                stage1.initModality(Modality.APPLICATION_MODAL);
+//                stage1.initModality(Modality.APPLICATION_MODAL);
                 stage1.setTitle("Login");
                 stage1.getIcons().add(new Image("/com/images/login.png"));
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/login/login.fxml"));
@@ -263,6 +264,11 @@ public class PageController implements Initializable {
 
     private void loadRows() {
         tableView.getItems().addAll(dao.getAllBooks());
+    }
+
+    @FXML
+    private void saveBtnOnAction(ActionEvent event) {
+        
     }
 
 }

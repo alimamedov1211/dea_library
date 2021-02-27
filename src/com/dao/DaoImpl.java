@@ -15,7 +15,7 @@ public class DaoImpl implements Dao {
     public boolean createAccount(Users users) {
         boolean result = false;
         Connection c = null;  //Baza ile elaqe
-        PreparedStatement ps = null;   //Bazadan gelen sql i icraya hazirlayir
+        PreparedStatement ps = null;   //sql i icraya hazirlayir
         //RESULTSET  bazadan melumat getirir
         String sql = "insert into library_group1.users(name,surname,username,password,mail,address)\n"
                                       + "values ('" + users.getName() + "','" + users.getSurname() + "','" + users.getUsername() + "','" + users.getPassword() + "','" + users.getMail() + "','" + users.getAddress() + "')";
@@ -140,6 +140,31 @@ public class DaoImpl implements Dao {
             System.out.println("No Connection");
         }
         return allBooks;
+    }
+
+    @Override
+    public boolean addBook(Book newBook) {
+    boolean result = false;
+    Connection c = null;
+    PreparedStatement ps = null;
+     String sql = "insert into library_group1.book(name,theme,author,page_count,amount,language)\n"
+     + "values ('" +newBook.getName()+ "','" +newBook.getTheme()+ "','" +newBook.getAuthor()+ "','" +newBook.getPageCount()+ "','"+newBook.getAmount()+"','"+newBook.getLanguage()+ "')";
+    c = DbHelper.getConnection();
+        if (c!=null) {
+            try {
+                ps = c.prepareStatement(sql);
+                ps.execute();
+                result = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            finally{
+                Utility.closeAll(c, ps, null);
+            }
+        } else {
+            System.out.println("No Connection!");
+        }
+    return result;
     }
 
 }

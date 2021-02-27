@@ -20,7 +20,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class LoginController implements Initializable {
-
+    public static String username1=null;
     DaoImpl dao = new DaoImpl();
 
     @FXML
@@ -94,6 +94,7 @@ public class LoginController implements Initializable {
 
     @FXML
     private void loginBtnOnAction(ActionEvent event) {
+        username1 = usernameTF.getText();
         String username = usernameTF.getText().trim();
         String password = passwordTF.getText().trim();
         if (username.equalsIgnoreCase("") || password.equalsIgnoreCase("")) {
@@ -104,6 +105,7 @@ public class LoginController implements Initializable {
                 warningLBL.setText("Username ve ya Parol yanlisdir!");
             } else {
                 try {
+                   
                     Stage stage = new Stage();
                     stage.setTitle("Main Page");
                     stage.getIcons().add(new Image("/com/images/book.png"));

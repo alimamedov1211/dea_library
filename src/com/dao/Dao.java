@@ -11,4 +11,5 @@ public interface Dao {
     public boolean checkUserbyUsername(String username);
     public Users checkUser(String username, String password);
     public List<Book> getAllBooks();
+    public boolean addBook(Book newBook);
 }
