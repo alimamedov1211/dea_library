@@ -2,6 +2,7 @@ package com.login;
 
 import com.dao.DaoImpl;
 import com.model.Users;
+import com.page.PageController;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
@@ -20,7 +21,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 public class LoginController implements Initializable {
-    public static String username1=null;
+//    public static String username1=null;
     DaoImpl dao = new DaoImpl();
 
     @FXML
@@ -42,7 +43,7 @@ public class LoginController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
 
     }
-
+        
     @FXML
     private void checkUsernameOnKeyReleased(KeyEvent event) {
         warningLBL.setText("");
@@ -94,7 +95,7 @@ public class LoginController implements Initializable {
 
     @FXML
     private void loginBtnOnAction(ActionEvent event) {
-        username1 = usernameTF.getText();
+//        username1 = usernameTF.getText();
         String username = usernameTF.getText().trim();
         String password = passwordTF.getText().trim();
         if (username.equalsIgnoreCase("") || password.equalsIgnoreCase("")) {
@@ -114,6 +115,8 @@ public class LoginController implements Initializable {
                     Scene scene = new Scene(root);
                     stage.setScene(scene);
                     stage.show();
+                    PageController pc = loader.getController();
+                    pc.setUser(user);
                     Stage oldStage =  (Stage) loginBtn.getScene().getWindow();
                     oldStage.close();
                 } catch (Exception e) {

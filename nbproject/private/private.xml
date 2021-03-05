@@ -2,6 +2,12 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/alima/Documents/NetBeansProjects/MyLibrary_Group1/src/com/model/Book.java</file>
+            <file>file:/C:/Users/alima/Documents/NetBeansProjects/MyLibrary_Group1/src/com/dao/DaoImpl.java</file>
+            <file>file:/C:/Users/alima/Documents/NetBeansProjects/MyLibrary_Group1/src/com/page/PageController.java</file>
+            <file>file:/C:/Users/alima/Documents/NetBeansProjects/MyLibrary_Group1/src/com/login/LoginController.java</file>
+            <file>file:/C:/Users/alima/Documents/NetBeansProjects/MyLibrary_Group1/src/com/dao/Dao.java</file>
+        </group>
     </open-files>
 </project-private>

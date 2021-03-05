@@ -31,7 +31,11 @@ import javax.swing.JOptionPane;
 
 public class PageController implements Initializable {
 
+    private Users user1;
     DaoImpl dao = new DaoImpl();
+
+    Integer selectedId = 0; //id get ucun
+
     @FXML
     private TextField nameTF;
     @FXML
@@ -108,15 +112,19 @@ public class PageController implements Initializable {
     private TableColumn<Book, String> statusColumn;
     @FXML
     private Label warningLBL;
-    Users u = new Users();
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadLanguageCB();
         loadThemeCB();
         tableView.setVisible(false);
-        welcomeLBL.setText("Welcome, "+LoginController.username1);
+
         loadColumn();
         loadRows();
+    }
+
+    public void setUser(Users selectedUser) {
+        this.user1 = selectedUser;
     }
 
     @FXML
@@ -125,7 +133,7 @@ public class PageController implements Initializable {
 
     @FXML
     private void addLanguageBtnOnAction(ActionEvent event) {
-        String newLanguage = JOptionPane.showInputDialog(null,"New Language");
+        String newLanguage = JOptionPane.showInputDialog(null, "New Language");
         if (newLanguage.equalsIgnoreCase("")) {
             warningLBL.setText("Language is empty!");
         } else {
@@ -134,14 +142,14 @@ public class PageController implements Initializable {
             } else {
                 if (languageCombobox.getItems().add(newLanguage)) {
                     warningLBL.setText("New Language successfully added!");
-                } 
+                }
             }
         }
     }
 
     @FXML
     private void addThemeBtnOnAction(ActionEvent event) {
-         String newTheme = JOptionPane.showInputDialog(null,"New Theme");
+        String newTheme = JOptionPane.showInputDialog(null, "New Theme");
         if (newTheme.equalsIgnoreCase("")) {
             warningLBL.setText("Theme is empty!");
         } else {
@@ -150,7 +158,7 @@ public class PageController implements Initializable {
             } else {
                 if (themeCombobox.getItems().add(newTheme)) {
                     warningLBL.setText("New Theme successfully added!");
-                } 
+                }
             }
         }
     }
@@ -161,39 +169,123 @@ public class PageController implements Initializable {
 
     @FXML
     private void updateBtnOnAction(ActionEvent event) {
+        warningLBL.setText("");
+        if (nameTF.getText().equalsIgnoreCase("") || authorTF.getText().equalsIgnoreCase("") || pageCountTF.getText().equalsIgnoreCase("") || AmountTF.getText().equalsIgnoreCase("")) {
+            warningLBL.setText("Zehmet olmasa butun xanalari doldurun!");
+        } else {
+            try {
+                Book updateBook = new Book();
+                updateBook.setId(selectedId);
+                updateBook.setName(nameTF.getText());
+                updateBook.setAuthor(authorTF.getText());
+                updateBook.setAmount(Double.parseDouble(AmountTF.getText()));
+                updateBook.setPageCount(Integer.parseInt(pageCountTF.getText()));
+                updateBook.setTheme(themeCombobox.getSelectionModel().getSelectedItem());
+                updateBook.setLanguage(languageCombobox.getSelectionModel().getSelectedItem());
+                if (dao.updateBook(updateBook)) {
+                    warningLBL.setText("Ugurla deyisildi!");
+                    refresh();
+                } else {
+                    warningLBL.setText("Deyismek alinmadi!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 
     @FXML
     private void searchTFOnKeyReleased(KeyEvent event) {
+        String keyword = searchTF.getText().toUpperCase().trim();
+        if (keyword.equalsIgnoreCase("")) {
+            refresh();
+        } else {
+            List resultList = dao.searchBook(keyword);
+            tableView.getItems().clear();
+            tableView.getItems().addAll(resultList);
+        }
     }
 
     @FXML
     private void amountFilterBtnOnAction(ActionEvent event) {
+        warningLBL.setText("");
+        if (minAmountTF.getText().trim().equalsIgnoreCase("") || maxAmountTF.getText().trim().equalsIgnoreCase("")) {
+            warningLBL.setText("Zehmet olmasa butun xanalari doldurun!");
+        } else {
+            Double minAmount = Double.parseDouble(minAmountTF.getText().trim());
+            Double maxAmount = Double.parseDouble(maxAmountTF.getText().trim());
+            List<Book> result = dao.filterBookByAmount(minAmount, maxAmount);
+            tableView.getItems().clear();
+            tableView.getItems().addAll(result);
+        }
     }
 
     @FXML
     private void filterPageCountBtnOnAction(ActionEvent event) {
+        warningLBL.setText("");
+        if (minPageCountTF.getText().trim().equalsIgnoreCase("") || maxPageCountTF.getText().trim().equalsIgnoreCase("")) {
+            warningLBL.setText("Zehmet olmasa butun xanalari doldurun!");
+        } else {
+            Double min = Double.parseDouble(minPageCountTF.getText().trim());
+            Double max = Double.parseDouble(maxPageCountTF.getText().trim());
+            List<Book> result = dao.filterBookByPageCount(min, max);
+            tableView.getItems().clear();
+            tableView.getItems().addAll(result);
+        }
     }
 
     @FXML
     private void clearAllFilterBtnOnAction(ActionEvent event) {
+        searchTF.setText("");
+        minAmountTF.setText("");
+        maxAmountTF.setText("");
+        minPageCountTF.setText("");
+        maxPageCountTF.setText("");
+        refresh();
     }
 
     @FXML
     private void buyBtnOnAction(ActionEvent event) {
+        boolean isUpdated = dao.updateBookByStatus(selectedId);
+        if (isUpdated) {
+            refresh();
+            warningLBL.setText("Status Ugurla deyisildi!");
+        } else {
+            warningLBL.setText("Ugursuz oldu!");
+        }
     }
 
     @FXML
     private void statusFilterBtnOnAction(ActionEvent event) {
+        if (soldCheckBox.isSelected()) {
+            List<Book> soldBook = dao.filterBookByStatus("Sold");
+            tableView.getItems().clear();
+            tableView.getItems().addAll(soldBook);
+        } else if (unsoldCheckBox.isSelected()) {
+
+            List<Book> unSoldBook = dao.filterBookByStatus("Not Sold");
+            tableView.getItems().clear();
+            tableView.getItems().addAll(unSoldBook);
+        } else if (allCheckBox.isSelected()) {
+            refresh();
+        }
     }
 
     @FXML
     private void deleteBtnOnAction(ActionEvent event) {
+        if (dao.deleteBook(selectedId)) {
+            refresh();
+            warningLBL.setText("Ugurla silindi!");
+        } else {
+            warningLBL.setText("Silinme prosesi ugursuz oldu!");
+        }
     }
 
     @FXML
     private void showBtnOnAction(ActionEvent event) {
         tableView.setVisible(true);
+        welcomeLBL.setText("Welcome, " + user1.getName() + " " + user1.getSurname());
 
     }
 
@@ -227,6 +319,14 @@ public class PageController implements Initializable {
 
     @FXML
     private void tableViewOnMousePressed(MouseEvent event) {
+        Book book = tableView.getSelectionModel().getSelectedItem();
+        nameTF.setText(book.getName());
+        authorTF.setText(book.getAuthor());
+        pageCountTF.setText(book.getPageCount() + "");
+        AmountTF.setText(book.getAmount() + "");
+        languageCombobox.getSelectionModel().select(book.getLanguage());
+        themeCombobox.getSelectionModel().select(book.getTheme());
+        selectedId = book.getId();
     }
 
     private void loadLanguageCB() {
@@ -266,9 +366,36 @@ public class PageController implements Initializable {
         tableView.getItems().addAll(dao.getAllBooks());
     }
 
+    //table refreshing for table (savebtn)
+    public void refresh() {
+        tableView.getItems().clear();
+        tableView.getItems().addAll(dao.getAllBooks());
+    }
+
     @FXML
     private void saveBtnOnAction(ActionEvent event) {
-        
+        warningLBL.setText("");
+        if (nameTF.getText().equalsIgnoreCase("") || authorTF.getText().equalsIgnoreCase("") || pageCountTF.getText().equalsIgnoreCase("") || AmountTF.getText().equalsIgnoreCase("")) {
+            warningLBL.setText("Zehmet olmasa butun xanalari doldurun!");
+        } else {
+            try {
+                Book newBook = new Book();
+                newBook.setName(nameTF.getText());
+                newBook.setTheme(themeCombobox.getSelectionModel().getSelectedItem());
+                newBook.setAuthor(authorTF.getText());
+                newBook.setPageCount(Integer.parseInt(pageCountTF.getText()));
+                newBook.setAmount(Double.parseDouble(AmountTF.getText()));
+                newBook.setLanguage(languageCombobox.getSelectionModel().getSelectedItem());
+                if (dao.addBook(newBook)) {
+                    warningLBL.setText("Yeni kitab ugurla elave olundu!");
+                    refresh();
+                } else {
+                    warningLBL.setText("Elave olunmadi!");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
